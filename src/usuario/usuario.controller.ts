@@ -4,6 +4,7 @@ import { UsuarioEntity } from "./usuario.entity";
 import { criaUsuarioDTO } from "./dto/usuario.dto";
 
 import {v4 as uuid} from 'uuid';// importante que seja colocado o import dessa forma sempre
+import { ListaUsuarioDTO } from "./dto/consulta.dto";
 
 @Controller('/usuarios')
 export class UsuarioController{
@@ -28,6 +29,18 @@ export class UsuarioController{
 
     @Get()
     async listaUsuarios(){
-        return this.clsUsuariosArmazenados.Usuarios;
+        
+
+        const usuariosListados = this.clsUsuariosArmazenados.Usuarios;
+        const listaRetorno = usuariosListados.map(
+            usuario => new ListaUsuarioDTO(
+                usuario.id,
+                usuario.nome,
+                usuario.email
+            )
+        );
+        
+        return listaRetorno;
     }
+    
 }
