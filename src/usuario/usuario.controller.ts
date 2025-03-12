@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put } from "@nestjs/common";
 import { UsuariosArmazenados } from "./usuario.dm";
 import { UsuarioEntity } from "./usuario.entity";
 import { criaUsuarioDTO } from "./dto/usuario.dto";
 
 import {v4 as uuid} from 'uuid';// importante que seja colocado o import dessa forma sempre
 import { ListaUsuarioDTO } from "./dto/consulta.dto";
+import { alteraUsuarioDTO } from "./dto/alteraUsuario.dto";
 
 @Controller('/usuarios')
 export class UsuarioController{
@@ -42,5 +43,16 @@ export class UsuarioController{
         
         return listaRetorno;
     }
+
+    @Put('/:id')
+    async atualizaUsuario(@Param('id') id: string, @Body() novosDados: alteraUsuarioDTO){
+        const usuarioAtualizado = await this.clsUsuariosArmazenados.atualizaUSuario(id, novosDados)
+
+        return{
+            usuario: usuarioAtualizado,
+            message: 'Usuário atualizado'
+        }
+    }
+
     
 }
