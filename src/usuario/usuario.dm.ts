@@ -13,12 +13,25 @@ export class UsuariosArmazenados{
         return this.#usuarios;
     }
 
+    async removeUsuario(id: string){
+        const usuario = this.buscaPorID(id);
+
+        this.#usuarios = this.#usuarios.filter(
+            usuarioSalvo => usuarioSalvo.id !== id
+        )
+
+        return usuario;
+    }
+
     atualizaUSuario(id: string, dadosAtualizacao: Partial<UsuarioEntity>){
         const usuario = this.buscaPorID(id);
 
         Object.entries(dadosAtualizacao).forEach(
             ([chave,valor]) => {
                 if(chave === 'id'){
+                    return
+                }
+                if (valor === undefined){
                     return
                 }
 
@@ -30,7 +43,7 @@ export class UsuariosArmazenados{
     }
 
     private buscaPorID(id: string){
-        const possivelUsuario = this.#usuarios.find(
+        const possivelUsuario =     this.#usuarios.find(
             usuarioSalvo => usuarioSalvo.id === id
         )
 
