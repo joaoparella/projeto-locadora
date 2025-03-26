@@ -6,13 +6,18 @@ import { criaUsuarioDTO } from "./dto/usuario.dto";
 import {v4 as uuid} from 'uuid';// importante que seja colocado o import dessa forma sempre
 import { ListaUsuarioDTO } from "./dto/consulta.dto";
 import { alteraUsuarioDTO } from "./dto/alteraUsuario.dto";
+import { loginUsuarioDTO } from "./dto/loginUsuario.dto";
+import { ApiBadRequestResponse, ApiResponse, ApiTags } from "@nestjs/swagger";
 
+@ApiTags('usuario')
 @Controller('/usuarios')
 export class UsuarioController{
     constructor(private clsUsuariosArmazenados: UsuariosArmazenados){
         
     }    
     @Post()
+    @ApiResponse({status: 201, description:"Retorna que houve sucesso ao criar um usuario."})
+    @ApiBadRequestResponse({description: "Retorna que alguma informação não foi informada devidamente."})
     async criaUsuario(@Body() dadosUsuario: criaUsuarioDTO){
         
          
@@ -52,7 +57,7 @@ export class UsuarioController{
             usuario: usuarioAtualizado,
             message: 'Usuário atualizado'
         }
-    }
+    }9
 
     @Delete('/:id')
     async removeUsuario(@Param('id') id: string){
@@ -62,6 +67,17 @@ export class UsuarioController{
             usuario: usuarioRemovido,
             message: 'Usuário removido'
         }
+    }
+
+    @Post('/login')
+    async login(@Body() dadosLogin: loginUsuarioDTO){
+        var login = this.clsUsuariosArmazenados.validarLogin(dadosLogin.email,dadosLogin.senha);
+        return {
+            status: login.login,
+            usuario: login.login?login.usuario:null,
+            message: login.login?"login efetuado":"usuario ou senhas inválidos"
+        }
+
     }
 
     

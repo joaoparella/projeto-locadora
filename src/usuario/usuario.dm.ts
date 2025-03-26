@@ -23,17 +23,23 @@ export class UsuariosArmazenados{
         return usuario;
     }
 
+
+
     atualizaUSuario(id: string, dadosAtualizacao: Partial<UsuarioEntity>){
         const usuario = this.buscaPorID(id);
 
         Object.entries(dadosAtualizacao).forEach(
             ([chave,valor]) => {
-                if(chave === 'id'){
-                    return
-                }
                 if (valor === undefined){
                     return
                 }
+                if(chave === 'id'){
+                    return
+                }else if(chave === 'senha'){
+                    usuario.trocarSenha(valor);
+                    return
+                }
+                
 
                 usuario[chave] = valor;
             }
@@ -53,6 +59,28 @@ export class UsuariosArmazenados{
         
         return possivelUsuario;
     }
+
+    private buscaPorEmail(email: string){
+        const possivelUsuario =     this.#usuarios.find(
+            usuarioSalvo => usuarioSalvo.email === email
+        )
+
+        if (!possivelUsuario){
+            throw new Error('Usuario nao encontrado')
+        }
+        
+        return possivelUsuario;
+    }
+
+    validarLogin(email:string,senha:string){
+        const usuario = this.buscaPorEmail(email);
+        return {
+            login: usuario.login(senha),
+            usuario: usuario
+        };
+    }
+
+
 
     async validaEmail(email: string): Promise<boolean>{
         const possivelUsuario = this.#usuarios.find(
