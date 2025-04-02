@@ -29,7 +29,7 @@ export class UsuarioController{
                     map((response) => response.data)
                 )
             )
-            if (retornoCep.error = 'true'){
+            if (retornoCep.error == 'true'){
                 throw new Error('CEP Não encontrado')
             }
         }catch(error){
@@ -71,15 +71,39 @@ export class UsuarioController{
 
     @Put('/:id')
     async atualizaUsuario(@Param('id') id: string, @Body() novosDados: alteraUsuarioDTO){
-        
+        var messageError = '';
+        if (novosDados.cep){
+            try{
+                var retornoCep = await lastValueFrom(this.HttpService
+                                                    .get(`https://viacep.com.br/ws/${novosDados.cep}/json/`)
+                                                    .pipe(
+                                                        map((response) => response.data)
+                                                    ))
+                if (retornoCep.erro){
+                    retornoCep = null
+                    throw new Error('CEP Não encontrado')                
+                }
+            }catch(error){
+                messageError = ' | Erro ao buscar CEP - '+ error.message;
+            }
+
+            var dadosEndereco = {
+                endereco : retornoCep?retornoCep.logradouro:'',
+                cidade:  retornoCep?retornoCep.localidade:'',
+                cep: novosDados.cep
+            }
+
+            await this.clsUsuariosArmazenados.atualizaUSuario(id, dadosEndereco)            
+        }   
 
         const usuarioAtualizado = await this.clsUsuariosArmazenados.atualizaUSuario(id, novosDados)
 
+        
         return{
             usuario: usuarioAtualizado,
-            message: 'Usuário atualizado'
+            message: 'Usuário atualizado' + messageError
         }
-    }9
+    }
 
     @Delete('/:id')
     async removeUsuario(@Param('id') id: string){
