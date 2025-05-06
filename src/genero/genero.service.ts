@@ -4,6 +4,7 @@ import {v4 as uuid} from 'uuid';
 import { GENERO } from './genero.entity';
 import { RetornoCadastroDTO, RetornoObjDTO } from 'src/dto/retorno.dto';
 import { CriaGeneroDTO } from './dto/criaGenero.dto';
+import { AlteraGeneroDTO } from './dto/atualizaGenero.dto';
 //import { AlteraGeneroDTO } from './dto/atualizaGenero.dto';
 
 
