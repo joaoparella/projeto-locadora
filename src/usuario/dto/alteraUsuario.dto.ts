@@ -1,67 +1,61 @@
-import { IsEmail, IsInt, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator";
+//classe responsável por definir padrão para alteração de usuários
+//DTO é "data transfer object" ou objeto de transferencia de dados, ou seja, é um tipo de classe para transferir dados
+import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, MinLength } from "class-validator";
 import { EmailUnico } from "../validacao/email-unico.validator";
-import { SenhaForte } from "../validacao/senha-forte.validator";
-import { ApiPropertyOptional } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { SenhaForte } from "../validacao/strongpass.validator";
+import { AlteraPessoaDTO } from "src/pessoa/dto/atualizaPessoa.dto";
 
 export class alteraUsuarioDTO{
-    @IsString()
-    @IsNotEmpty({message: "nome Não pode ser vazio"})
+
+    @EmailUnico({message: "Email repetido"})
+    @IsEmail(undefined, {message: "email inválido"})
     @IsOptional()
     @ApiPropertyOptional({
-            example: 'Roberto Silva',
-            description: 'Esse campo vai ser utilizado como identificação do usuario, deve ser informado um nome completo'
-        })
-    nome:string;
+        example: "joao@teste.com",
+        description: "Email do usuário, deve ser informado um email válido e que não se repita"
+    })
+    EMAIL: string;
+
+    @MinLength(8, {message: "senha deve ter no minimo 8 digitos"})
+    @ApiPropertyOptional({
+        example: "Senha@444151241",
+        description: "Senha do usuário, deve ter pelo menos 8 digitos, tendo numeros, letras e caracteres especiais"
+    })
+    @IsOptional()
+    @SenhaForte({message:"Senha deve ter complexidade maior. Está muito fraca"})
+    SENHA:string;
+
+    @IsString()
+    @IsOptional()
+    @ApiPropertyOptional({
+        example: "Bauru",
+        description: "Cidade do usuário, deve ser informado um texto com a cidade"
+    })
+    CIDADE: string;
+
+    @IsString()
+    @IsOptional()
+    @ApiPropertyOptional({
+        example: "12123412349",
+        description: "Telefone do usuário, deve ser informado um texto apenas com os numeros do telefone"
+    })
+    TELEFONE: string;
+
+    @IsOptional()
+    @ApiPropertyOptional({
+        example: '{"NOME": "JOAO" , "NASCIMENTO": "1995-01-01", "PAIS":"BRASIL"}',
+        description: "DADOS do usuário, deve ser informado um objeto com os dados descritos"
+    })
+    PESSOA: AlteraPessoaDTO;
     
-    @IsInt()
-    @IsOptional()
-     @ApiPropertyOptional({
-            example: 19,
-            description: 'Esse campo identifica a idade do usuario, deve ser enviado um numero'
-        })
-    idade: Number;
 
+    @IsNotEmpty()
     @IsString()
     @IsOptional()
     @ApiPropertyOptional({
-        example: '17000000',
-        description: 'Deve ser enviado um CEP válido'
+        example: '8e42a2a5-56c8-4f2f-a3ea-eed61beffe05',
+        description: "ID Da foto do usuário, que deve ser inserido pelo modulo de FILES, depois enviado o ID."
     })
-    @MinLength(8,{message: "CEP precisa de pelo menos 8 digitos"})
-    cep: string;
-
-    @IsString()
-    @IsOptional()
-    @ApiPropertyOptional({
-        example: 'Apartamento 123',
-        description: 'Deve ser informado o complemento do endereço'
-    })
-    complemento: string;
-
-
-    @IsEmail(undefined,{message:"email é inválido"})    
-    @EmailUnico({message:"email já cadastrado. Tente novamente"})
-    @IsOptional()
-    @ApiPropertyOptional({
-            example: 'roberto@silva.com',
-            description: 'Esse campo ira ser o login do usuario, deve ser enviado um email válido e unico'
-        })
-    email: string;
-
-    @IsString()
-    @IsOptional()
-    @ApiPropertyOptional({
-            example: '14999888777',
-            description: 'Esse campo é o contato do usuario, deve ser informado apenas numeros'
-        })
-    telefone: string;
-
-    @MinLength(8,{message: "Senha precisa de pelo menos 8 digitos"})
-    @SenhaForte({message:"Senha muito fraca. Tente novamente"})
-    @IsOptional()
-    @ApiPropertyOptional({
-            example: 'Senha@123456',
-            description: 'A senha deve ter numeros, letras maiusculas e minusculas, e também caracteres especiais'
-        })
-    senha: string; 
+    FOTO: string;
 }
