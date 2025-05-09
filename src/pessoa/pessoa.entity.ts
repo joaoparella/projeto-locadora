@@ -16,20 +16,20 @@ export class PESSOA {
     @Column({length: 255})
     PAIS: string;
 
-    // @ManyToMany(
-    //   () => FILME, 
-    //   filme => filme.atores, //optional
-    //   {onDelete: 'NO ACTION', onUpdate: 'NO ACTION'})
-    //   @JoinTable({
-    //     name: 'filme_pessoa',
-    //     joinColumn: {
-    //       name: 'IDPESSOA',
-    //       referencedColumnName: 'ID',
-    //     },
-    //     inverseJoinColumn: {
-    //       name: 'IDFILME',
-    //       referencedColumnName: 'ID',
-    //     },
-    //   })
-    // filmes?: FILME[];
+    @ManyToMany(
+      () => FILME, 
+      filme => filme.atores, //optional
+      {onDelete: 'NO ACTION', onUpdate: 'NO ACTION'})
+      @JoinTable({
+        name: 'filme_pessoa',
+        joinColumn: {
+          name: 'IDPESSOA',
+          referencedColumnName: 'ID',
+        },
+        inverseJoinColumn: {
+          name: 'IDFILME',
+          referencedColumnName: 'ID',
+        },
+      })
+    filmes?: FILME[];
 }
