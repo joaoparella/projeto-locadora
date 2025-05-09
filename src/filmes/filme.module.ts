@@ -8,14 +8,23 @@ import { generoProviders } from 'src/genero/genero.provider';
 import { GeneroService } from 'src/genero/genero.service';
 import { FilmeService } from './filme.service';
 import { DatabaseModule } from 'src/database/database.module';
+import { pessoaProviders } from 'src/pessoa/pessoa.providers';
+import { PessoaService } from 'src/pessoa/pessoa.service';
+import { filme_pessoaProviders } from 'src/filme_pessoa/filme_pessoa.providers';
+import { FILME_PESSOAService } from 'src/filme_pessoa/filme_pessoa.service';
 
 @Module({  
   imports: [DatabaseModule],
   controllers: [FilmeController],  
-  providers: [...filmeProviders,
+  providers: [
+    ...filmeProviders,
     FilmeService,
+    ...pessoaProviders,
+    PessoaService,
+    ...filme_pessoaProviders,
+    FILME_PESSOAService,
     ...generoProviders,
     GeneroService,
-  ],
+    ],
 })
 export class FilmeModule {}

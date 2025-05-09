@@ -8,13 +8,19 @@ import { alteraFilmeDTO } from './dto/alteraFilme.dto';
 import { GENERO } from 'src/genero/genero.entity';
 import { GeneroService } from 'src/genero/genero.service';
 import { ListaFilmeDTO } from './dto/listaFilme.dto';
+import { atorFilmeDTO } from './dto/atorFilme.dto';
+import { RetornoElencoDTO } from 'src/filme_pessoa/dto/retornoElenco.dto';
+import { FILME_PESSOAService } from 'src/filme_pessoa/filme_pessoa.service';
+import { PessoaService } from 'src/pessoa/pessoa.service';
 
 @Injectable()
 export class FilmeService {
   constructor(
     @Inject('FILME_REPOSITORY')
     private filmeRepository: Repository<FILME>,
-    private readonly generoService: GeneroService,
+    private readonly filmeAtorService:  FILME_PESSOAService,    
+    private readonly atorService:  PessoaService,
+    private readonly generoService: GeneroService,    
   ) {}
 
   async listar(): Promise<ListaFilmeDTO[]> {
@@ -139,5 +145,26 @@ export class FilmeService {
         message: "Houve um erro ao alterar." + error.message
       };
     });
+  }
+
+
+  async addAtor(dados: atorFilmeDTO): Promise<RetornoCadastroDTO> {
+    const filme = await this.localizarID(dados.IDFILME);
+    const ator = await this.atorService.localizarID(dados.IDATOR);
+    
+    return this.filmeAtorService.inserir(filme,ator,dados.FUNCAO);    
+  }
+
+  async removeAtor(dados: atorFilmeDTO): Promise<RetornoCadastroDTO> {
+    const filme = await this.localizarID(dados.IDFILME);
+    const ator = await this.atorService.localizarID(dados.IDATOR);
+    
+    return this.filmeAtorService.remover(filme,ator);
+  }
+
+  async listarAtor(idfilme: string): Promise<RetornoElencoDTO> {
+    const filme = await this.localizarID(idfilme);
+    
+    return this.filmeAtorService.listarElenco(filme);
   }
 }
